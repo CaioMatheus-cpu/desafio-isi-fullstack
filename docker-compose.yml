@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:16
+    container_name: desafio-db
+    environment:
+      POSTGRES_USER: desafio
+      POSTGRES_PASSWORD: desafio
+      POSTGRES_DB: desafio
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  db-test:
+    image: postgres:16
+    container_name: desafio-db-test
+    environment:
+      POSTGRES_USER: desafio
+      POSTGRES_PASSWORD: desafio
+      POSTGRES_DB: desafio_test
+    ports:
+      - "5433:5432"
+
+volumes:
+  pgdata:
