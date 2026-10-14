@@ -5,23 +5,23 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('clubes')
-export class Clube {
+@Entity('clubs')
+export class Club {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'varchar', length: 60 })
-  nome: string;
+  name: string;
 
   @Column({ type: 'char', length: 3, unique: true })
-  sigla: string;
+  acronym: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: '300.00' })
-  caixa: string;
+  cash: string;
 
   @Column({ type: 'varchar', length: 5, nullable: true })
-  formacao: string | null;
+  formation: string | null;
 
-  @CreateDateColumn({ name: 'criado_em', type: 'timestamptz' })
-  criadoEm: Date;
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  createdAt: Date;
 }
