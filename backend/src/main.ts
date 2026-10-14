@@ -1,13 +1,15 @@
-import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { API_PREFIX } from './common/api-prefix';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { BodyValidationPipe } from './common/pipes/body-validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix(API_PREFIX);
 
   // Só o frontend configurado pode chamar a API. Nada de liberar tudo com *.
   app.enableCors({
@@ -15,10 +17,8 @@ async function bootstrap() {
     exposedHeaders: ['Location', 'Content-Disposition'],
   });
 
-  // whitelist descarta campos que não pertencem ao endpoint, sem dar erro,
-  // como o enunciado pede (V7). Não ligamos a conversão implícita de tipos
-  // de propósito: "15" (texto) tem que ser recusado, não virar 15.
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalPipes(new BodyValidationPipe());
 
   await app.listen(config.get<number>('PORT') ?? 3000);
 }
