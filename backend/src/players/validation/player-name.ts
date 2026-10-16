@@ -16,7 +16,7 @@ export function normalizeName(value: unknown): unknown {
 }
 
 // Caracteres de controle: de U+0000 a U+001F e de U+007F a U+009F.
-function hasControlCharacters(value: string): boolean {
+export function hasControlCharacters(value: string): boolean {
   return Array.from(value).some((character) => {
     const code = character.codePointAt(0) ?? 0;
     return code <= 0x1f || (code >= 0x7f && code <= 0x9f);
