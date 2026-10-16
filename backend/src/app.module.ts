@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ClubsModule } from './clubs/clubs.module';
+import { ClockModule } from './common/clock';
 import { entities } from './database/entities';
+import { MarketModule } from './market/market.module';
 import { PlayersModule } from './players/players.module';
 
 @Module({
@@ -18,7 +21,10 @@ import { PlayersModule } from './players/players.module';
         synchronize: false,
       }),
     }),
+    ClockModule,
     PlayersModule,
+    ClubsModule,
+    MarketModule,
   ],
 })
 export class AppModule {}
