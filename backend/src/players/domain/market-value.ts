@@ -54,7 +54,7 @@ function ageAdjustment(age: number): number {
 
 // Valor de mercado (RN05). Nunca é gravado: muda quando a condição, a
 // agilidade ou a idade mudam, então a gente recalcula a cada consulta.
-export function calculateMarketValue(
+export function calculateMarketValueCents(
   baseValue: number,
   condition: PlayerCondition,
   agility: number,
@@ -72,5 +72,17 @@ export function calculateMarketValue(
   );
 
   // E o valor também nunca cai abaixo de 1,00.
-  return fromCents(Math.max(valueCents, MIN_MARKET_VALUE_CENTS));
+  return Math.max(valueCents, MIN_MARKET_VALUE_CENTS);
+}
+
+// O mesmo valor de mercado, em reais, para quem vai mostrar na resposta.
+export function calculateMarketValue(
+  baseValue: number,
+  condition: PlayerCondition,
+  agility: number,
+  age: number,
+): number {
+  return fromCents(
+    calculateMarketValueCents(baseValue, condition, agility, age),
+  );
 }
