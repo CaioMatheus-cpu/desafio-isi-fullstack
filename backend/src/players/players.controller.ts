@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
@@ -16,8 +17,10 @@ import { ParseIdPipe } from '../common/pipes/parse-id.pipe';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdateConditionDto } from './dto/update-condition.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
-import { PlayerResponse } from './player.mapper';
+import { PlayerResponse, PlayersPage } from './player.mapper';
 import { PlayersService } from './players.service';
+import type { ListPlayersQuery } from './query/list-players.query';
+import { ListPlayersQueryPipe } from './query/list-players-query.pipe';
 
 @Controller('players')
 export class PlayersController {
@@ -31,6 +34,13 @@ export class PlayersController {
     const player = await this.playersService.create(dto);
     response.setHeader('Location', `/${API_PREFIX}/players/${player.id}`);
     return player;
+  }
+
+  @Get()
+  list(
+    @Query(ListPlayersQueryPipe) query: ListPlayersQuery,
+  ): Promise<PlayersPage> {
+    return this.playersService.list(query);
   }
 
   @Get(':id')

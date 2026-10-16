@@ -4,7 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, IsNull, Repository } from 'typeorm';
+import { DataSource, In, IsNull, Repository } from 'typeorm';
+import { Club } from '../database/entities/club.entity';
 import { Lineup } from '../database/entities/lineup.entity';
 import { Player } from '../database/entities/player.entity';
 import { calculateBaseValue } from './domain/base-value';
@@ -12,15 +13,46 @@ import { calculateOverall } from './domain/overall';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdateConditionDto } from './dto/update-condition.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
-import { PlayerResponse, toPlayerResponse } from './player.mapper';
+import { PlayersListingRepository } from './listing/players-listing.repository';
+import { PlayerResponse, PlayersPage, toPlayerResponse } from './player.mapper';
+import { ListPlayersQuery } from './query/list-players.query';
 
 @Injectable()
 export class PlayersService {
   constructor(
     @InjectRepository(Player)
     private readonly players: Repository<Player>,
+    @InjectRepository(Club)
+    private readonly clubs: Repository<Club>,
+    private readonly listing: PlayersListingRepository,
     private readonly dataSource: DataSource,
   ) {}
+
+  async list(query: ListPlayersQuery): Promise<PlayersPage> {
+    if (query.clubId !== undefined) {
+      await this.ensureClubExists(query.clubId);
+    }
+
+    // A busca devolve só os ids, já filtrados, ordenados e paginados. Os
+    // dados completos vêm do banco e são colocados na mesma ordem dos ids.
+    const { ids, total } = await this.listing.search(query);
+    const found = ids.length ? await this.players.findBy({ id: In(ids) }) : [];
+    const byId = new Map(found.map((player) => [player.id, player]));
+    const data = ids.flatMap((id) => {
+      const player = byId.get(id);
+      return player ? [toPlayerResponse(player)] : [];
+    });
+
+    return {
+      data,
+      meta: {
+        page: query.page,
+        limit: query.limit,
+        total_items: total,
+        total_pages: Math.ceil(total / query.limit),
+      },
+    };
+  }
 
   async create(dto: CreatePlayerDto): Promise<PlayerResponse> {
     // O valor base é calculado UMA vez, aqui, e gravado. Depois disso o
@@ -111,6 +143,12 @@ export class PlayersService {
     // Exclusão lógica: nada some do banco, só ganha a data da exclusão.
     player.deletedAt = new Date();
     await this.players.save(player);
+  }
+
+  private async ensureClubExists(id: number): Promise<void> {
+    if (!(await this.clubs.existsBy({ id }))) {
+      throw new NotFoundException('Clube não encontrado.');
+    }
   }
 
   // Jogador excluído conta como inexistente em todo o sistema.

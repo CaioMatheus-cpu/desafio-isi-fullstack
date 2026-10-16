@@ -23,6 +23,16 @@ export interface PlayerResponse {
   club_id: number | null;
 }
 
+export interface PlayersPage {
+  data: PlayerResponse[];
+  meta: {
+    page: number;
+    limit: number;
+    total_items: number;
+    total_pages: number;
+  };
+}
+
 // Monta a resposta da API. O valor de mercado e o overall NÃO vêm do banco:
 // são calculados aqui, na hora, com os dados atuais do jogador.
 export function toPlayerResponse(player: Player): PlayerResponse {
