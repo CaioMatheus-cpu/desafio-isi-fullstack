@@ -30,7 +30,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       );
     }
 
-    response.status(status).json({ message });
+    // O tipo é forçado para JSON: um tipo definido antes do erro (como o de um
+    // arquivo CSV) não pode vazar para a resposta de erro.
+    response.status(status).type('application/json').json({ message });
   }
 
   private describe(exception: unknown): ErrorBody {

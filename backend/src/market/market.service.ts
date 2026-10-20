@@ -11,6 +11,7 @@ import {
   parseBrasiliaDateTime,
 } from '../common/brasilia-time';
 import { Clock } from '../common/clock';
+import { LOCK_FOR_UPDATE } from '../common/locks';
 import { Club } from '../database/entities/club.entity';
 import { Contract } from '../database/entities/contract.entity';
 import { Player } from '../database/entities/player.entity';
@@ -54,8 +55,6 @@ interface PurchaseRequest {
   loyaltyUntil: Date;
   now: Date;
 }
-
-const LOCK_FOR_UPDATE = { mode: 'pessimistic_write' } as const;
 
 @Injectable()
 export class MarketService {

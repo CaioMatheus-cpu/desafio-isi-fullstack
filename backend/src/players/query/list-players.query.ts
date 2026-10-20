@@ -5,6 +5,11 @@ import {
   PlayerCondition,
   PlayerPosition,
 } from '../domain/player.types';
+import {
+  MAX_ID,
+  parseQueryInteger,
+  readQueryParam,
+} from '../../common/query-params';
 import { AGE_MAX, AGE_MIN } from '../validation/player-limits';
 import { hasControlCharacters, normalizeName } from '../validation/player-name';
 
@@ -33,7 +38,6 @@ export interface ListPlayersQuery {
   limit: number;
 }
 
-const MAX_ID = 2147483647;
 const SEARCH_MIN_LENGTH = 2;
 const SEARCH_MAX_LENGTH = 100;
 const VALUE_MAX_CENTS = 55000;
@@ -42,7 +46,6 @@ const DEFAULT_LIMIT = 10;
 const LIMIT_MAX = 50;
 const MAX_SORT_CRITERIA = 2;
 
-const POSITIVE_INTEGER = /^[1-9][0-9]*$/;
 const DECIMAL = /^(0|[1-9][0-9]*)(\.[0-9]{1,2})?$/;
 
 type RawQuery = Record<string, unknown>;
@@ -53,38 +56,55 @@ type RawQuery = Record<string, unknown>;
 // ignorados. Aqui só olhamos o texto: existência de clube é com o serviço.
 export function parseListPlayersQuery(raw: RawQuery): ListPlayersQuery {
   const query: ListPlayersQuery = {
-    search: parseSearch(read(raw, 'search')),
-    position: parseOneOf(read(raw, 'position'), 'position', PLAYER_POSITIONS),
+    search: parseSearch(readQueryParam(raw, 'search')),
+    position: parseOneOf(
+      readQueryParam(raw, 'position'),
+      'position',
+      PLAYER_POSITIONS,
+    ),
     condition: parseOneOf(
-      read(raw, 'condition'),
+      readQueryParam(raw, 'condition'),
       'condition',
       PLAYER_CONDITIONS,
     ),
-    free: parseBoolean(read(raw, 'free'), 'free'),
-    clubId: parseInteger(read(raw, 'club_id'), 'club_id', 1, MAX_ID),
-    minAge: parseInteger(read(raw, 'min_age'), 'min_age', AGE_MIN, AGE_MAX),
-    maxAge: parseInteger(read(raw, 'max_age'), 'max_age', AGE_MIN, AGE_MAX),
-    minValueCents: parseValueInCents(read(raw, 'min_value'), 'min_value'),
-    maxValueCents: parseValueInCents(read(raw, 'max_value'), 'max_value'),
-    sort: parseSort(read(raw, 'sort')),
-    page: parseInteger(read(raw, 'page'), 'page', 1, MAX_ID) ?? DEFAULT_PAGE,
+    free: parseBoolean(readQueryParam(raw, 'free'), 'free'),
+    clubId: parseQueryInteger(
+      readQueryParam(raw, 'club_id'),
+      'club_id',
+      1,
+      MAX_ID,
+    ),
+    minAge: parseQueryInteger(
+      readQueryParam(raw, 'min_age'),
+      'min_age',
+      AGE_MIN,
+      AGE_MAX,
+    ),
+    maxAge: parseQueryInteger(
+      readQueryParam(raw, 'max_age'),
+      'max_age',
+      AGE_MIN,
+      AGE_MAX,
+    ),
+    minValueCents: parseValueInCents(
+      readQueryParam(raw, 'min_value'),
+      'min_value',
+    ),
+    maxValueCents: parseValueInCents(
+      readQueryParam(raw, 'max_value'),
+      'max_value',
+    ),
+    sort: parseSort(readQueryParam(raw, 'sort')),
+    page:
+      parseQueryInteger(readQueryParam(raw, 'page'), 'page', 1, MAX_ID) ??
+      DEFAULT_PAGE,
     limit:
-      parseInteger(read(raw, 'limit'), 'limit', 1, LIMIT_MAX) ?? DEFAULT_LIMIT,
+      parseQueryInteger(readQueryParam(raw, 'limit'), 'limit', 1, LIMIT_MAX) ??
+      DEFAULT_LIMIT,
   };
 
   rejectContradictions(query);
   return query;
-}
-
-function read(raw: RawQuery, name: string): string | undefined {
-  const value = raw[name];
-  if (value === undefined) {
-    return undefined;
-  }
-  if (typeof value !== 'string' || value === '') {
-    throw new BadRequestException(`${name} está vazio ou repetido.`);
-  }
-  return value;
 }
 
 function parseSearch(value: string | undefined): string | undefined {
@@ -128,26 +148,6 @@ function parseBoolean(
 ): boolean | undefined {
   const parsed = parseOneOf(value, name, ['true', 'false'] as const);
   return parsed === undefined ? undefined : parsed === 'true';
-}
-
-// Inteiro positivo, só com dígitos, sem sinal, sem zero à esquerda, sem
-// ponto e sem expoente: "25" vale, "025", "+5", "1e2" e "2.0" não.
-function parseInteger(
-  value: string | undefined,
-  name: string,
-  min: number,
-  max: number,
-): number | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
-  const number = POSITIVE_INTEGER.test(value) ? Number(value) : NaN;
-  if (!Number.isSafeInteger(number) || number < min || number > max) {
-    throw new BadRequestException(
-      `${name} deve ser um inteiro de ${min} a ${max}.`,
-    );
-  }
-  return number;
 }
 
 // Decimal na forma 10, 10.5 ou 10.55, de 0 a 550. Devolve em centavos,
