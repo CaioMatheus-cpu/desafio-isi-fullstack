@@ -4,8 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClubsModule } from './clubs/clubs.module';
 import { ClockModule } from './common/clock';
 import { entities } from './database/entities';
+import { LineupsModule } from './lineups/lineups.module';
+import { MatchesModule } from './matches/matches.module';
 import { MarketModule } from './market/market.module';
 import { PlayersModule } from './players/players.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -25,6 +28,9 @@ import { PlayersModule } from './players/players.module';
     PlayersModule,
     ClubsModule,
     MarketModule,
+    TransactionsModule,
+    LineupsModule,
+    MatchesModule,
   ],
 })
 export class AppModule {}
