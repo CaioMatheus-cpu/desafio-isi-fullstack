@@ -1,32 +1,19 @@
-# React + TypeScript + Vite
+# Frontend — interface do Passe
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React (TypeScript) com Vite. As instruções completas (pré-requisitos, como executar, variáveis de ambiente,
+decisões e uso de IA) estão no [README da raiz](../README.md).
 
-Currently, two official plugins are available:
+Resumo dos comandos, nesta pasta:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+cp .env.example .env
+npm ci
+npm run dev               # http://localhost:5173 (a API precisa estar em VITE_API_URL)
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+npm test                  # testes de componente e de funções (Vitest)
+npm run lint              # Oxlint
+npm run format:check      # Prettier (só confere); para formatar: npm run format
+npm run build             # confere os tipos e gera a versão de produção
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Telas: boas-vindas (`/`), jogadores, clubes (elenco, escalação e histórico), partidas e classificação.
