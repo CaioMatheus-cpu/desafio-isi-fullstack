@@ -1,4 +1,4 @@
-import type { Condition } from '../api/types'
+import type { Condition, Position } from '../api/types'
 
 // Moeda fictícia da liga: sempre 2 casas, com vírgula decimal (37,00).
 const money = new Intl.NumberFormat('pt-BR', {
@@ -29,6 +29,12 @@ export function formatDateTime(apiDate: string): string {
   return `${day}/${month}/${year} ${hour}:${minute}`
 }
 
+// Data e hora separadas (DD/MM/AAAA e HH:MM), para mostrar a hora em cinza.
+export function formatDateParts(apiDate: string): { date: string; time: string } {
+  const [date = apiDate, time = ''] = formatDateTime(apiDate).split(' ')
+  return { date, time }
+}
+
 // O campo de data e hora do navegador devolve AAAA-MM-DDTHH:MM. O horário
 // digitado é o de Brasília, então basta acrescentar o fuso que a API exige.
 export function toApiDateTime(localValue: string): string {
@@ -43,4 +49,12 @@ const CONDITION_LABELS: Record<Condition, string> = {
 
 export function conditionLabel(condition: Condition): string {
   return CONDITION_LABELS[condition]
+}
+
+export const POSITION_NAMES: Record<Position, string> = {
+  GOL: 'Goleiro',
+  ZAG: 'Zagueiro',
+  LAT: 'Lateral',
+  MEI: 'Meio-campo',
+  ATA: 'Atacante',
 }

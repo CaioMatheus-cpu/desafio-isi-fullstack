@@ -6,11 +6,13 @@ export interface Notice {
   id: number
   kind: NoticeKind
   text: string
+  // Título curto do aviso ("Condição alterada"); o texto detalha.
+  title?: string
 }
 
 export interface NoticeContextValue {
   notices: Notice[]
-  notify: (kind: NoticeKind, text: string) => void
+  notify: (kind: NoticeKind, text: string, title?: string) => void
   dismiss: (id: number) => void
 }
 

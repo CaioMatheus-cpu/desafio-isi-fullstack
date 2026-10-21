@@ -2,6 +2,9 @@ import { useRef, useState } from 'react'
 import { messageOf } from '../lib/errors'
 import { useNotice } from './notice-context'
 
+// O aviso de sucesso: só o texto, ou título + texto.
+export type SuccessMessage = string | { title: string; text: string }
+
 export type ActionResult<T> = { ok: true; value: T } | { ok: false }
 
 // Executa uma ação que altera dados (cadastrar, comprar, vender...). Faz três
@@ -19,7 +22,7 @@ export function useAction() {
 
   async function run<T>(
     action: () => Promise<T>,
-    successMessage: string | ((result: T) => string),
+    successMessage: SuccessMessage | ((result: T) => SuccessMessage),
   ): Promise<ActionResult<T>> {
     if (running.current) {
       return { ok: false }
@@ -28,10 +31,12 @@ export function useAction() {
     setBusy(true)
     try {
       const result = await action()
-      notify(
-        'success',
-        typeof successMessage === 'function' ? successMessage(result) : successMessage,
-      )
+      const message = typeof successMessage === 'function' ? successMessage(result) : successMessage
+      if (typeof message === 'string') {
+        notify('success', message)
+      } else {
+        notify('success', message.text, message.title)
+      }
       return { ok: true, value: result }
     } catch (error) {
       notify('error', messageOf(error))

@@ -3,13 +3,7 @@ import type { Condition, Page, Player, Position } from './types'
 
 export const PLAYERS_PER_PAGE = 10
 
-export type PlayerSort =
-  | 'name'
-  | 'value_asc'
-  | 'value_desc'
-  | 'age_asc'
-  | 'age_desc'
-  | 'position'
+export type PlayerSort = 'name' | 'value_asc' | 'value_desc' | 'age_asc' | 'age_desc' | 'position'
 
 // Os filtros da listagem. Tudo é opcional: o que ficar vazio não filtra.
 export interface PlayerFilters {
@@ -47,7 +41,7 @@ export function listPlayers(filters: PlayerFilters): Promise<Page<Player>> {
   return request<Page<Player>>('/players', {
     query: {
       ...filters,
-      free: filters.free ? true : undefined,
+      free: filters.free,
       limit: PLAYERS_PER_PAGE,
     },
   })
