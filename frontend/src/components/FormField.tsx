@@ -1,3 +1,4 @@
+import { CircleAlert } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 interface FormFieldProps {
@@ -19,7 +20,7 @@ export function FormField({ label, htmlFor, error, hint, children }: FormFieldPr
       {hint && !error && <p className="field-hint">{hint}</p>}
       {error && (
         <p className="field-error" id={`${htmlFor}-error`} role="alert">
-          {error}
+          <CircleAlert size={13} aria-hidden="true" /> {error}
         </p>
       )}
     </div>

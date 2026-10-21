@@ -4,7 +4,8 @@ import { Modal } from './Modal'
 
 interface ConfirmDialogProps {
   title: string
-  confirmLabel: string
+  confirmLabel: ReactNode
+  description?: string
   busy: boolean
   onConfirm: () => void
   onCancel: () => void
@@ -15,13 +16,14 @@ interface ConfirmDialogProps {
 export function ConfirmDialog({
   title,
   confirmLabel,
+  description,
   busy,
   onConfirm,
   onCancel,
   children,
 }: ConfirmDialogProps) {
   return (
-    <Modal title={title} onClose={onCancel}>
+    <Modal title={title} description={description} onClose={onCancel}>
       <div className="modal-body">{children}</div>
       <div className="modal-actions">
         <Button onClick={onCancel}>Cancelar</Button>

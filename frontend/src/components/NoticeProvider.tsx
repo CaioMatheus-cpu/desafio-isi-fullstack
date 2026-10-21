@@ -16,9 +16,9 @@ export function NoticeProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const notify = useCallback(
-    (kind: NoticeKind, text: string) => {
+    (kind: NoticeKind, text: string, title?: string) => {
       const id = nextId.current++
-      setNotices((current) => [...current, { id, kind, text }])
+      setNotices((current) => [...current, { id, kind, text, title }])
       setTimeout(() => dismiss(id), VISIBLE_MS)
     },
     [dismiss],
@@ -36,7 +36,10 @@ export function NoticeProvider({ children }: { children: ReactNode }) {
             className={`notice notice-${notice.kind}`}
             role={notice.kind === 'error' ? 'alert' : 'status'}
           >
-            <span>{notice.text}</span>
+            <span>
+              {notice.title && <strong className="notice-title">{notice.title}</strong>}
+              {notice.text}
+            </span>
             <button
               type="button"
               className="notice-close"
