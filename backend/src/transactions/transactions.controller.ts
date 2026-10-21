@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Query, Res } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { ParseIdPipe } from '../common/pipes/parse-id.pipe';
 import { ListTransactionsQueryPipe } from './query/list-transactions-query.pipe';
@@ -6,10 +7,20 @@ import type { ListTransactionsQuery } from './query/list-transactions.query';
 import { TransactionsPage } from './transaction.mapper';
 import { TransactionsService } from './transactions.service';
 
+@ApiTags('Histórico')
 @Controller('clubs')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
+  @ApiOperation({
+    summary: 'Histórico de compras e vendas do clube, com os totais do filtro',
+  })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    description: 'COMPRA, VENDA ou as duas, separadas por vírgula',
+  })
+  @ApiQuery({ name: 'player_id', required: false, type: Number })
   @Get(':id/transactions')
   list(
     @Param('id', ParseIdPipe) id: number,
@@ -21,6 +32,11 @@ export class TransactionsController {
   // O arquivo é texto CSV em UTF-8. O tipo só é definido quando o arquivo
   // está pronto: se algo der errado antes, o erro sai em JSON, como nas outras
   // rotas, em vez de herdar o tipo do arquivo.
+  @ApiOperation({
+    summary: 'Exporta o histórico em CSV, com os mesmos filtros',
+  })
+  @ApiQuery({ name: 'type', required: false })
+  @ApiQuery({ name: 'player_id', required: false, type: Number })
   @Get(':id/transactions/export')
   async exportCsv(
     @Param('id', ParseIdPipe) id: number,

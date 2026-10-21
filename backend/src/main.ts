@@ -4,6 +4,8 @@ import { AppModule } from './app.module';
 import { API_PREFIX } from './common/api-prefix';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { BodyValidationPipe } from './common/pipes/body-validation.pipe';
+import { requestLogger } from './common/request-logger';
+import { setupSwagger } from './common/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,8 +19,10 @@ async function bootstrap() {
     exposedHeaders: ['Location', 'Content-Disposition'],
   });
 
+  app.use(requestLogger);
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(new BodyValidationPipe());
+  setupSwagger(app);
 
   await app.listen(config.get<number>('PORT') ?? 3000);
 }
