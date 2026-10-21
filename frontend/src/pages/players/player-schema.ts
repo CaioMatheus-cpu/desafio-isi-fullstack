@@ -1,17 +1,13 @@
 import { z } from 'zod'
 import { POSITIONS } from '../../api/types'
 
-const NOT_A_NUMBER = 'Informe um número.'
-
-// Número inteiro dentro de um intervalo, com a mensagem de cada falha.
-function integerBetween(label: string, min: number, max: number) {
-  const range = `${label} deve ser de ${min} a ${max}.`
-  return z
-    .number({ error: NOT_A_NUMBER })
-    .int('Use um número inteiro.')
-    .min(min, range)
-    .max(max, range)
+// Número inteiro dentro de um intervalo. `required` é a mensagem de campo vazio
+// ("Informe o potencial.") e `range` a de valor fora da faixa.
+function integerBetween(required: string, range: string, min: number, max: number) {
+  return z.number({ error: required }).int('Use um número inteiro.').min(min, range).max(max, range)
 }
+
+const ATTRIBUTE_RANGE = 'Use um valor de 1 a 99.'
 
 // As validações que a tela faz antes de enviar: campos obrigatórios, tamanho do
 // nome e faixas numéricas. O que depende de outros dados (como o nome ter pelo
@@ -21,18 +17,18 @@ export const playerSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(3, 'O nome deve ter de 3 a 100 caracteres.')
-    .max(100, 'O nome deve ter de 3 a 100 caracteres.'),
+    .min(3, 'Use de 3 a 100 caracteres.')
+    .max(100, 'Use de 3 a 100 caracteres.'),
   position: z.enum(POSITIONS, { error: 'Escolha a posição.' }),
-  agility: integerBetween('A agilidade', 1, 100),
-  age: integerBetween('A idade', 16, 45),
-  pace: integerBetween('A velocidade', 1, 99),
-  shooting: integerBetween('A finalização', 1, 99),
-  passing: integerBetween('O passe', 1, 99),
-  dribbling: integerBetween('O drible', 1, 99),
-  defending: integerBetween('A defesa', 1, 99),
-  physical: integerBetween('O físico', 1, 99),
-  potential: integerBetween('O potencial', 1, 99),
+  agility: integerBetween('Informe a agilidade.', 'Use uma agilidade de 1 a 100.', 1, 100),
+  age: integerBetween('Informe a idade.', 'Use uma idade de 16 a 45 anos.', 16, 45),
+  pace: integerBetween('Informe a velocidade.', ATTRIBUTE_RANGE, 1, 99),
+  shooting: integerBetween('Informe a finalização.', ATTRIBUTE_RANGE, 1, 99),
+  passing: integerBetween('Informe o passe.', ATTRIBUTE_RANGE, 1, 99),
+  dribbling: integerBetween('Informe o drible.', ATTRIBUTE_RANGE, 1, 99),
+  defending: integerBetween('Informe a defesa.', ATTRIBUTE_RANGE, 1, 99),
+  physical: integerBetween('Informe o físico.', ATTRIBUTE_RANGE, 1, 99),
+  potential: integerBetween('Informe o potencial.', ATTRIBUTE_RANGE, 1, 99),
 })
 
 // Na edição só mudam nome, posição, agilidade e idade: os indicadores e o

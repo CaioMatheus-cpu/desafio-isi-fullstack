@@ -3,11 +3,14 @@ import type { Condition, Position } from '../../api/types'
 
 // O estado dos campos de filtro da tela. Os campos de texto ficam como texto
 // até serem enviados à API.
+// Todos, só livres ou só jogadores que estão em algum clube.
+export type Ownership = 'all' | 'free' | 'owned'
+
 export interface FilterState {
   search: string
   position: Position | ''
   condition: Condition | ''
-  free: boolean
+  ownership: Ownership
   clubId: string
   minAge: string
   maxAge: string
@@ -20,7 +23,7 @@ export const EMPTY_FILTERS: FilterState = {
   search: '',
   position: '',
   condition: '',
-  free: false,
+  ownership: 'all',
   clubId: '',
   minAge: '',
   maxAge: '',
@@ -30,11 +33,11 @@ export const EMPTY_FILTERS: FilterState = {
 }
 
 export const SORT_OPTIONS: { value: PlayerSort; label: string }[] = [
-  { value: 'name', label: 'Nome (A a Z)' },
-  { value: 'value_desc', label: 'Valor de mercado (maior primeiro)' },
-  { value: 'value_asc', label: 'Valor de mercado (menor primeiro)' },
-  { value: 'age_desc', label: 'Idade (maior primeiro)' },
-  { value: 'age_asc', label: 'Idade (menor primeiro)' },
+  { value: 'name', label: 'Nome' },
+  { value: 'value_desc', label: 'Maior valor de mercado' },
+  { value: 'value_asc', label: 'Menor valor de mercado' },
+  { value: 'age_desc', label: 'Maior idade' },
+  { value: 'age_asc', label: 'Menor idade' },
   { value: 'position', label: 'Posição (GOL a ATA)' },
 ]
 
@@ -48,7 +51,7 @@ export function toApiFilters(state: FilterState, page: number): PlayerFilters {
     search: state.search.trim(),
     position: state.position,
     condition: state.condition,
-    free: state.free,
+    free: state.ownership === 'all' ? undefined : state.ownership === 'free',
     club_id: toNumber(state.clubId),
     min_age: toNumber(state.minAge),
     max_age: toNumber(state.maxAge),
