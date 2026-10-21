@@ -1,3 +1,7 @@
+# Um único comando sobe tudo (banco, API e interface):
+#   docker compose up --build
+# Só o banco, para rodar a API e a interface na máquina:
+#   docker compose up -d db
 services:
   db:
     image: postgres:16
@@ -10,16 +14,35 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U desafio -d desafio"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
 
-  db-test:
-    image: postgres:16
-    container_name: desafio-db-test
+  api:
+    build: ./backend
+    container_name: desafio-api
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      POSTGRES_USER: desafio
-      POSTGRES_PASSWORD: desafio
-      POSTGRES_DB: desafio_test
+      DATABASE_URL: postgres://desafio:desafio@db:5432/desafio
+      CORS_ORIGIN: http://localhost:5173
+      PORT: "3000"
     ports:
-      - "5433:5432"
+      - "3000:3000"
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:3000/api/v1
+    container_name: desafio-web
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
 
 volumes:
   pgdata:
