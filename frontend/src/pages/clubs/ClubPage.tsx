@@ -68,7 +68,7 @@ export function ClubPage() {
 
   if (club.error) {
     // 404 é endereço errado; qualquer outro erro vira o aviso com "Tentar de novo".
-    const missing = club.error.toLowerCase().includes('não encontrado') || !Number.isInteger(clubId)
+    const missing = club.errorStatus === 404 || !Number.isInteger(clubId)
     return (
       <section>
         <div className="state-box state-empty">

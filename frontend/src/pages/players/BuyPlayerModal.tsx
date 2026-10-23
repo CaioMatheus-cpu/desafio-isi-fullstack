@@ -254,6 +254,8 @@ export function BuyPlayerModal({ player, onClose, onBought }: BuyPlayerModalProp
                 id="buy-date"
                 type="date"
                 aria-label="Data do fim da fidelidade"
+                aria-invalid={errors.date ? true : undefined}
+                aria-describedby="buy-date-note"
                 value={date}
                 onChange={(event) => setDate(event.target.value)}
               />
@@ -264,17 +266,19 @@ export function BuyPlayerModal({ player, onClose, onBought }: BuyPlayerModalProp
                 id="buy-time"
                 type="time"
                 aria-label="Hora do fim da fidelidade"
+                aria-invalid={errors.date ? true : undefined}
+                aria-describedby="buy-date-note"
                 value={time}
                 onChange={(event) => setTime(event.target.value)}
               />
             </div>
           </div>
           {errors.date ? (
-            <p className="field-error" role="alert">
+            <p className="field-error" id="buy-date-note" role="alert">
               {errors.date}
             </p>
           ) : (
-            <p className="field-hint">
+            <p className="field-hint" id="buy-date-note">
               Depois do momento da compra e até 1.095 dias. Horário de Brasília; enviado com o fuso
               (-03:00).
             </p>

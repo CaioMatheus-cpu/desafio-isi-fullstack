@@ -26,6 +26,15 @@ export function FilterPopover({
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
   const panelId = useId()
+  const trigger = useRef<HTMLButtonElement>(null)
+  const panel = useRef<HTMLDivElement>(null)
+
+  // Ao abrir, o foco vai para o primeiro campo do painel.
+  useEffect(() => {
+    if (open) {
+      panel.current?.querySelector<HTMLElement>('button, input, select')?.focus()
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) {
@@ -39,6 +48,7 @@ export function FilterPopover({
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setOpen(false)
+        trigger.current?.focus()
       }
     }
     document.addEventListener('mousedown', closeOutside)
@@ -52,6 +62,7 @@ export function FilterPopover({
   return (
     <div className="filter-popover" ref={root}>
       <button
+        ref={trigger}
         type="button"
         className={`filter-trigger${summary ? ' filter-trigger-on' : ''}`}
         aria-expanded={open}
@@ -65,7 +76,13 @@ export function FilterPopover({
         <ChevronDown size={14} aria-hidden="true" />
       </button>
       {open && (
-        <div className="filter-panel" id={panelId} role="group" aria-label={`Filtro de ${label}`}>
+        <div
+          className="filter-panel"
+          ref={panel}
+          id={panelId}
+          role="group"
+          aria-label={`Filtro de ${label}`}
+        >
           {children}
         </div>
       )}

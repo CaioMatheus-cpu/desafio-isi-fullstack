@@ -25,6 +25,41 @@ interface RowMenuProps {
 export function RowMenu({ title, items }: RowMenuProps) {
   const [position, setPosition] = useState<{ top: number; left: number }>()
   const button = useRef<HTMLButtonElement>(null)
+  const menu = useRef<HTMLDivElement>(null)
+
+  // Itens do menu que dá para escolher (os desabilitados ficam de fora do teclado).
+  function enabledItems(): HTMLElement[] {
+    return [
+      ...(menu.current?.querySelectorAll<HTMLElement>('[role="menuitem"]:not(:disabled)') ?? []),
+    ]
+  }
+
+  // Ao abrir, o foco vai para o primeiro item.
+  useEffect(() => {
+    if (position) {
+      enabledItems()[0]?.focus()
+    }
+  }, [position])
+
+  // Setas, Home e End percorrem os itens, como em qualquer menu.
+  function moveFocus(event: React.KeyboardEvent) {
+    const items = enabledItems()
+    const current = items.indexOf(document.activeElement as HTMLElement)
+    let next: number | undefined
+    if (event.key === 'ArrowDown') {
+      next = (current + 1) % items.length
+    } else if (event.key === 'ArrowUp') {
+      next = (current - 1 + items.length) % items.length
+    } else if (event.key === 'Home') {
+      next = 0
+    } else if (event.key === 'End') {
+      next = items.length - 1
+    }
+    if (next !== undefined) {
+      event.preventDefault()
+      items[next]?.focus()
+    }
+  }
 
   useEffect(() => {
     if (!position) {
@@ -78,8 +113,10 @@ export function RowMenu({ title, items }: RowMenuProps) {
       {position && (
         <div
           className="menu"
+          ref={menu}
           role="menu"
           aria-label={`Ações de ${title}`}
+          onKeyDown={moveFocus}
           style={{ top: position.top, left: position.left }}
           onMouseDown={(event) => event.stopPropagation()}
         >
@@ -93,6 +130,9 @@ export function RowMenu({ title, items }: RowMenuProps) {
                 className={`menu-item${item.destructive ? ' menu-item-destructive' : ''}`}
                 disabled={item.disabled}
                 onClick={() => {
+                  // O foco volta ao botão do menu antes da ação: se ela abrir uma janela,
+                  // é para ele que o foco retorna quando a janela fechar.
+                  button.current?.focus()
                   setPosition(undefined)
                   item.onSelect()
                 }}

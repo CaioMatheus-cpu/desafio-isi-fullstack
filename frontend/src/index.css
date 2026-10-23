@@ -3145,3 +3145,9 @@ form > .alert {
     margin-bottom: 0.25rem;
   }
 }
+
+/* Quando o foco entra numa janela, o contorno fica no que o usuário vai usar, não na janela. */
+.modal:focus,
+.sheet:focus {
+  outline: none;
+}

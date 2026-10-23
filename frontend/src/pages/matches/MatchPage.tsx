@@ -87,7 +87,7 @@ export function MatchPage() {
   const clubs = useRequest(() => listClubs(), 'clubs')
 
   if (match.error) {
-    const missing = match.error.toLowerCase().includes('não encontrad')
+    const missing = match.errorStatus === 404
     return (
       <section>
         <div className="state-box state-empty">

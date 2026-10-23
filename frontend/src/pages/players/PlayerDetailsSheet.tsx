@@ -1,8 +1,9 @@
 import { ShoppingCart, SquarePen, HeartPulse, X } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import type { Club, Player } from '../../api/types'
 import { Avatar, ConditionBadge, PositionBadge } from '../../components/Badges'
 import { Button } from '../../components/Button'
+import { useDialogFocus } from '../../hooks/useDialogFocus'
 import { formatMoney } from '../../lib/format'
 
 interface PlayerDetailsSheetProps {
@@ -33,6 +34,9 @@ export function PlayerDetailsSheet({
   onCondition,
   onBuy,
 }: PlayerDetailsSheetProps) {
+  const sheet = useRef<HTMLElement>(null)
+  useDialogFocus(sheet)
+
   useEffect(() => {
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -49,6 +53,8 @@ export function PlayerDetailsSheet({
       onMouseDown={(event) => event.target === event.currentTarget && onClose()}
     >
       <aside
+        ref={sheet}
+        tabIndex={-1}
         className="sheet"
         role="dialog"
         aria-modal="true"

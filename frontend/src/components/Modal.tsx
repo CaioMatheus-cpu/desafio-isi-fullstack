@@ -1,6 +1,7 @@
 import { X } from 'lucide-react'
-import { useEffect, useId } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import type { ReactNode } from 'react'
+import { useDialogFocus } from '../hooks/useDialogFocus'
 
 interface ModalProps {
   title: string
@@ -17,6 +18,8 @@ interface ModalProps {
 // ou clicando fora dela.
 export function Modal({ title, description, lead, wide = false, onClose, children }: ModalProps) {
   const titleId = useId()
+  const dialog = useRef<HTMLDivElement>(null)
+  useDialogFocus(dialog)
 
   useEffect(() => {
     function closeOnEscape(event: KeyboardEvent) {
@@ -34,6 +37,8 @@ export function Modal({ title, description, lead, wide = false, onClose, childre
       onMouseDown={(event) => event.target === event.currentTarget && onClose()}
     >
       <div
+        ref={dialog}
+        tabIndex={-1}
         className={`modal${wide ? ' modal-wide' : ''}`}
         role="dialog"
         aria-modal="true"

@@ -1,4 +1,5 @@
 import { useEffect, useEffectEvent, useState } from 'react'
+import { ApiError } from '../api/client'
 import { messageOf } from '../lib/errors'
 
 interface Result<T> {
@@ -6,6 +7,8 @@ interface Result<T> {
   key: string
   data?: T
   error?: string
+  // Código HTTP da recusa (404, 409...); 0 quando a API nem respondeu.
+  errorStatus?: number
 }
 
 // Carrega dados da API. `key` descreve o que está sendo pedido (por exemplo, os
@@ -34,7 +37,11 @@ export function useRequest<T>(loader: () => Promise<T>, key: string) {
       })
       .catch((error: unknown) => {
         if (!outdated) {
-          setResult({ key: requestKey, error: messageOf(error) })
+          setResult({
+            key: requestKey,
+            error: messageOf(error),
+            errorStatus: error instanceof ApiError ? error.status : undefined,
+          })
         }
       })
     return () => {
@@ -47,6 +54,7 @@ export function useRequest<T>(loader: () => Promise<T>, key: string) {
   return {
     data: result?.data,
     error: answered ? result.error : undefined,
+    errorStatus: answered ? result.errorStatus : undefined,
     loading: !answered,
     reload: () => setVersion((current) => current + 1),
   }
