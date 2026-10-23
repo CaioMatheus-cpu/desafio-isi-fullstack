@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { EventEmitter } from 'node:events';
 import { Logger } from '@nestjs/common';
 import type { Request, Response } from 'express';
