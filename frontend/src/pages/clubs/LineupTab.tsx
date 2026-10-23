@@ -1,8 +1,9 @@
-import { Check, CircleAlert, Lock, Swords, TriangleAlert, Plus } from 'lucide-react'
+import { Check, Lock, Swords, TriangleAlert, Plus } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import { saveLineup } from '../../api/lineups'
 import { FORMATIONS } from '../../api/types'
 import type { Formation, Lineup, SquadPlayer } from '../../api/types'
+import { Alert } from '../../components/Alert'
 import { Avatar, ConditionBadge } from '../../components/Badges'
 import { Button } from '../../components/Button'
 import { useNotice } from '../../hooks/notice-context'
@@ -138,13 +139,9 @@ function joinNames(names: string[]): string {
 export function LineupTab({ clubId, clubName, squad, lineup, error, onSaved }: LineupTabProps) {
   if (error) {
     return (
-      <div className="alert alert-error" role="alert">
-        <CircleAlert size={18} aria-hidden="true" />
-        <div>
-          <strong>Não foi possível carregar a escalação</strong>
-          <p>{error}</p>
-        </div>
-      </div>
+      <Alert tone="error" title="Não foi possível carregar a escalação">
+        {error}
+      </Alert>
     )
   }
   if (!lineup) {
@@ -171,13 +168,9 @@ export function LineupTab({ clubId, clubName, squad, lineup, error, onSaved }: L
   return (
     <>
       {!lineup.complete && (
-        <div className="callout callout-warning" role="alert">
-          <TriangleAlert size={18} aria-hidden="true" />
-          <div>
-            <strong>Escalação incompleta: o {clubName} não pode jogar partidas</strong>
-            <p>{incompleteReason}</p>
-          </div>
-        </div>
+        <Alert tone="warning" title={`Escalação incompleta: o ${clubName} não pode jogar partidas`}>
+          {incompleteReason}
+        </Alert>
       )}
       <LineupForm
         // Recria o formulário quando a escalação salva muda, para ele abrir já
@@ -287,13 +280,9 @@ function LineupForm({ clubId, clubName, squad, lineup, onSaved }: LineupFormProp
         </header>
 
         {refusal && (
-          <div className="alert alert-error lineup-alert" role="alert">
-            <CircleAlert size={18} aria-hidden="true" />
-            <div>
-              <strong>A escalação foi recusada</strong>
-              <p>{refusal}</p>
-            </div>
-          </div>
+          <Alert tone="error" title="A escalação foi recusada" className="lineup-alert">
+            {refusal}
+          </Alert>
         )}
 
         <fieldset className="formation-set">
@@ -401,19 +390,16 @@ function LineupForm({ clubId, clubName, squad, lineup, onSaved }: LineupFormProp
         </div>
 
         {weakened.length > 0 && (
-          <div className="callout callout-warning lineup-alert" role="status">
-            <TriangleAlert size={18} aria-hidden="true" />
-            <div>
-              <strong>
-                {joinNames(weakened.map((player) => player.name))}{' '}
-                {weakened.length === 1 ? 'está mal condicionado' : 'estão mal condicionados'}
-              </strong>
-              <p>
-                {weakened.length === 1 ? 'Pode jogar' : 'Podem jogar'}, mas cada atributo vale 15% a
-                menos durante a partida.
-              </p>
-            </div>
-          </div>
+          <Alert
+            tone="warning"
+            title={`${joinNames(weakened.map((player) => player.name))} ${
+              weakened.length === 1 ? 'está mal condicionado' : 'estão mal condicionados'
+            }`}
+            className="lineup-alert"
+          >
+            {weakened.length === 1 ? 'Pode jogar' : 'Podem jogar'}, mas cada atributo vale 15% a
+            menos durante a partida.
+          </Alert>
         )}
 
         <footer className="lineup-foot">

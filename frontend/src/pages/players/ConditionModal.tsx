@@ -1,9 +1,10 @@
-import { Lock, TriangleAlert } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { useState } from 'react'
 import { getLineup } from '../../api/lineups'
 import { changeCondition } from '../../api/players'
 import { CONDITIONS } from '../../api/types'
 import type { Condition, Player } from '../../api/types'
+import { Alert } from '../../components/Alert'
 import { Avatar, ConditionBadge } from '../../components/Badges'
 import { Button } from '../../components/Button'
 import { Modal } from '../../components/Modal'
@@ -107,16 +108,10 @@ export function ConditionModal({ player, clubName, onClose, onSaved }: Condition
       </fieldset>
 
       {leavesLineup && (
-        <div className="callout callout-warning" role="status">
-          <TriangleAlert size={18} aria-hidden="true" />
-          <div>
-            <strong>{player.name} é titular</strong>
-            <p>
-              Ao passar a Doente, o jogador sai da escalação, e o {clubName ?? 'clube'} só volta a
-              jogar partidas depois de escalar de novo os 5 titulares.
-            </p>
-          </div>
-        </div>
+        <Alert tone="warning" title={`${player.name} é titular`}>
+          Ao passar a Doente, o jogador sai da escalação, e o {clubName ?? 'clube'} só volta a jogar
+          partidas depois de escalar de novo os 5 titulares.
+        </Alert>
       )}
 
       <div className="modal-actions">

@@ -1,5 +1,4 @@
 import {
-  CircleAlert,
   Download,
   HandCoins,
   History,
@@ -11,6 +10,7 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { exportTransactions, listTransactions } from '../../api/transactions'
+import { Alert } from '../../components/Alert'
 import { TRANSACTION_TYPES } from '../../api/types'
 import type { Transaction, TransactionType } from '../../api/types'
 import { Avatar } from '../../components/Badges'
@@ -217,13 +217,9 @@ export function HistoryTab({ clubId, version }: HistoryTabProps) {
       </div>
 
       {history.error && filtered ? (
-        <div className="alert alert-error lineup-alert" role="alert">
-          <CircleAlert size={18} aria-hidden="true" />
-          <div>
-            <strong>O filtro foi recusado</strong>
-            <p>{history.error}</p>
-          </div>
-        </div>
+        <Alert tone="error" title="O filtro foi recusado" className="lineup-alert">
+          {history.error}
+        </Alert>
       ) : (
         <DataTable
           caption="Histórico de transações"

@@ -1,7 +1,6 @@
 import {
   ArrowRight,
   Calendar,
-  CircleAlert,
   CircleCheck,
   Clock,
   Info,
@@ -16,6 +15,7 @@ import { ApiError } from '../../api/client'
 import { listClubs } from '../../api/clubs'
 import { buyPlayer } from '../../api/market'
 import type { Player, PurchaseResult } from '../../api/types'
+import { Alert } from '../../components/Alert'
 import { Avatar } from '../../components/Badges'
 import { Button } from '../../components/Button'
 import { FormField } from '../../components/FormField'
@@ -197,13 +197,9 @@ export function BuyPlayerModal({ player, onClose, onBought }: BuyPlayerModalProp
     >
       <form noValidate onSubmit={confirm}>
         {failure && (
-          <div className="alert alert-error" role="alert">
-            <CircleAlert size={18} aria-hidden="true" />
-            <div>
-              <strong>{failure.title}</strong>
-              <p>{failure.text}</p>
-            </div>
-          </div>
+          <Alert tone="error" title={failure.title}>
+            {failure.text}
+          </Alert>
         )}
 
         <div className="player-card player-card-value">

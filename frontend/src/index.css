@@ -785,18 +785,6 @@ tbody tr:hover {
   margin: 1.75rem 0 0.75rem;
 }
 
-.callout {
-  border-radius: var(--radius);
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
-}
-
-.callout-warning {
-  background: var(--warning-soft);
-  border: 1px solid var(--warning-soft-border);
-  color: var(--warning-soft-foreground);
-}
-
 .starters {
   margin: 0;
   padding-left: 1.2rem;
@@ -1209,16 +1197,6 @@ a {
   cursor: not-allowed;
 }
 
-.callout {
-  display: flex;
-  gap: 0.6rem;
-  align-items: flex-start;
-}
-
-.callout p {
-  margin: 0.15rem 0 0;
-}
-
 .radio-cards {
   border: none;
   padding: 0;
@@ -1613,6 +1591,11 @@ a {
   padding: 0.75rem 1rem;
   border-radius: var(--radius-lg, 10px);
   border: 1px solid;
+  margin-bottom: 1rem;
+}
+
+.state-box .alert {
+  margin-bottom: 0;
 }
 
 .alert strong {
@@ -1627,6 +1610,12 @@ a {
   background: var(--destructive-soft);
   border-color: var(--destructive-soft-border);
   color: var(--destructive-soft-foreground);
+}
+
+.alert-warning {
+  background: var(--warning-soft);
+  border-color: var(--warning-soft-border);
+  color: var(--warning-soft-foreground);
 }
 
 .skeleton {
@@ -2550,10 +2539,6 @@ form > .alert {
   }
 }
 
-.callout strong {
-  display: block;
-}
-
 .lineup-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 330px;
@@ -2654,7 +2639,7 @@ form > .alert {
   margin: 0;
 }
 
-.lineup-main .callout {
+.lineup-main .alert {
   margin-bottom: 0;
 }
 

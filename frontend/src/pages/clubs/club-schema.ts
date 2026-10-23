@@ -10,5 +10,3 @@ export const clubSchema = z.object({
     .max(60, 'O nome deve ter de 3 a 60 caracteres.'),
   acronym: z.string().regex(/^[A-Z]{3}$/, 'A sigla deve ter exatamente 3 letras.'),
 })
-
-export type ClubFormValues = z.infer<typeof clubSchema>

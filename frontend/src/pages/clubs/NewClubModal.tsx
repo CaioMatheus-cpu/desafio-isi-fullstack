@@ -1,7 +1,8 @@
-import { CircleAlert, Shield, Wallet } from 'lucide-react'
+import { Shield, Wallet } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createClub } from '../../api/clubs'
+import { Alert } from '../../components/Alert'
 import { Button } from '../../components/Button'
 import { FormField } from '../../components/FormField'
 import { Modal } from '../../components/Modal'
@@ -67,13 +68,9 @@ export function NewClubModal({ onClose }: NewClubModalProps) {
     <Modal title="Novo clube" description="Informe o nome e a sigla do clube." onClose={onClose}>
       <form noValidate onSubmit={submit}>
         {apiError && (
-          <div className="alert alert-error" role="alert">
-            <CircleAlert size={18} aria-hidden="true" />
-            <div>
-              <strong>Não foi possível criar o clube</strong>
-              <p>{apiError}</p>
-            </div>
-          </div>
+          <Alert tone="error" title="Não foi possível criar o clube">
+            {apiError}
+          </Alert>
         )}
 
         <FormField

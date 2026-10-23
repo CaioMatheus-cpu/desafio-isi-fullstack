@@ -1,8 +1,9 @@
-import { CircleAlert, Info, Shield, Swords } from 'lucide-react'
+import { Info, Shield, Swords } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listClubs } from '../../api/clubs'
 import { playMatch } from '../../api/matches'
+import { Alert } from '../../components/Alert'
 import { Button } from '../../components/Button'
 import { FormField } from '../../components/FormField'
 import { Modal } from '../../components/Modal'
@@ -78,13 +79,9 @@ export function NewMatchModal({ onClose }: NewMatchModalProps) {
     >
       <form noValidate onSubmit={submit}>
         {apiError && (
-          <div className="alert alert-error" role="alert">
-            <CircleAlert size={18} aria-hidden="true" />
-            <div>
-              <strong>Não foi possível jogar a partida</strong>
-              <p>{apiError}</p>
-            </div>
-          </div>
+          <Alert tone="error" title="Não foi possível jogar a partida">
+            {apiError}
+          </Alert>
         )}
 
         <FormField

@@ -1,5 +1,6 @@
-import { CircleAlert, RefreshCw } from 'lucide-react'
+import { RefreshCw } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { Alert } from './Alert'
 import { Button } from './Button'
 
 export interface Column<T> {
@@ -47,13 +48,9 @@ export function DataTable<T>({
   if (error) {
     return (
       <div className="state-box">
-        <div className="alert alert-error" role="alert">
-          <CircleAlert size={18} aria-hidden="true" />
-          <div>
-            <strong>{errorTitle}</strong>
-            <p>{error}</p>
-          </div>
-        </div>
+        <Alert tone="error" title={errorTitle}>
+          {error}
+        </Alert>
         <Button onClick={onRetry}>
           <RefreshCw size={16} aria-hidden="true" /> Tentar de novo
         </Button>

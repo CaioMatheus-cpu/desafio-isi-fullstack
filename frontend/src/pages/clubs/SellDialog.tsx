@@ -1,17 +1,9 @@
-import {
-  CircleAlert,
-  CircleCheck,
-  HandCoins,
-  History,
-  Info,
-  LoaderCircle,
-  RefreshCw,
-  TriangleAlert,
-} from 'lucide-react'
+import { CircleCheck, HandCoins, History, Info, LoaderCircle, RefreshCw } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { ApiError } from '../../api/client'
 import { sellPlayer } from '../../api/market'
 import type { SaleResult, SquadPlayer } from '../../api/types'
+import { Alert } from '../../components/Alert'
 import { Avatar } from '../../components/Badges'
 import { Button } from '../../components/Button'
 import { Modal } from '../../components/Modal'
@@ -181,25 +173,15 @@ export function SellDialog({
       onClose={onClose}
     >
       {failure && (
-        <div className="alert alert-error" role="alert">
-          <CircleAlert size={18} aria-hidden="true" />
-          <div>
-            <strong>{failure.title}</strong>
-            <p>{failure.text}</p>
-          </div>
-        </div>
+        <Alert tone="error" title={failure.title}>
+          {failure.text}
+        </Alert>
       )}
       {isStarter && (
-        <div className="callout callout-warning" role="status">
-          <TriangleAlert size={18} aria-hidden="true" />
-          <div>
-            <strong>{player.name} é titular</strong>
-            <p>
-              Ao vender, o jogador sai da escalação, e o {clubName} só volta a jogar partidas depois
-              de escalar de novo os 5 titulares.
-            </p>
-          </div>
-        </div>
+        <Alert tone="warning" title={`${player.name} é titular`}>
+          Ao vender, o jogador sai da escalação, e o {clubName} só volta a jogar partidas depois de
+          escalar de novo os 5 titulares.
+        </Alert>
       )}
 
       <div className="player-card player-card-value">
