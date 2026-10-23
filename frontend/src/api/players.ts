@@ -1,7 +1,7 @@
 import { request } from './client'
 import type { Condition, Page, Player, Position } from './types'
 
-export const PLAYERS_PER_PAGE = 10
+const PLAYERS_PER_PAGE = 10
 
 export type PlayerSort = 'name' | 'value_asc' | 'value_desc' | 'age_asc' | 'age_desc' | 'position'
 
